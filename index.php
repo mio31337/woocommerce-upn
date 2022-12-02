@@ -90,7 +90,7 @@ namespace SoldoShop\UPNalog {
                 <table class="woocommerce-table shop_table gift_info">
                 <tbody>
                     <tr>
-                        <th>Prejemnik</th>
+                        <th>Ime, ulica in kraj prejemnika</th>
                         <td>
 
                         <?php echo wptexturize(wp_kses_post($bacs_account->account_name)); ?></br>
@@ -100,15 +100,15 @@ namespace SoldoShop\UPNalog {
                         </td>
                     </tr>
                     <tr>
-                        <th>IBAN Prejemnika</th>
+                        <th>IBAN prejemnika</th>
                         <td><?php echo wptexturize(wp_kses_post($bacs_account->iban)); ?></td>
                     </tr>
                     <tr>
-                        <th>Namen</th>
+                        <th>Namen plačila</th>
                         <td><?php echo sprintf(apply_filters('upn_purpose', 'Plačilo naročila %s'), $order->get_order_number()); ?></td>
                     </tr>
                     <tr>
-                        <th>Referenca Prejemnika</th>
+                        <th>Referenca prejemnika</th>
                         <td><?php echo sprintf(apply_filters('upn_reference', "SI00 %s"), $order->get_order_number()); ?></td>
                     </tr>
 
