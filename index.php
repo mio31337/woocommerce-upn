@@ -13,13 +13,10 @@ namespace SoldoShop\UPNalog {
 
     require_once "vendor/autoload.php";
 
-    class UPN
-    {
+    class UPN {
         public $account_details;
 
-        public function __construct()
-        {
-
+        public function __construct() {
             // Get the gateways instance
             $gateways = \WC_Payment_Gateways::instance();
 
@@ -36,14 +33,12 @@ namespace SoldoShop\UPNalog {
 
         }
 
-        public function genUPN($order)
-        {
+        public function genUPN($order) {
             if (empty($this->account_details)) {
                 return;
             }
 
             $bacs_accounts = apply_filters('woocommerce_bacs_accounts', $this->account_details, $order->get_id());
-
             $bacs_account = (object) $bacs_accounts[0];
 
             $png = (new \Media24si\UpnGenerator\UpnGenerator())
@@ -76,16 +71,13 @@ namespace SoldoShop\UPNalog {
             }
         }
 
-        public function genUPNDescription($order)
-        {
+        public function genUPNDescription($order) {
             if (empty($this->account_details)) {
                 return;
             }
 
             $bacs_accounts = apply_filters('woocommerce_bacs_accounts', $this->account_details, $order->get_id());
-
             $bacs_account = (object) $bacs_accounts[0];
-
             ?>
                 <table class="woocommerce-table shop_table gift_info">
                 <tbody>
@@ -115,7 +107,7 @@ namespace SoldoShop\UPNalog {
                 </tbody>
             </table>
             <?php
-}
+        }
 
         /**
          * Add content to the WC emails.
@@ -124,9 +116,7 @@ namespace SoldoShop\UPNalog {
          * @param bool     $sent_to_admin Sent to admin.
          * @param bool     $plain_text Email format: plain text or HTML.
          */
-        public function upn_instructions($order, $sent_to_admin, $plain_text = false)
-        {
-
+        public function upn_instructions($order, $sent_to_admin, $plain_text = false) {
             if (!$sent_to_admin && 'bacs' === $order->get_payment_method() && $order->has_status('on-hold')) {
                 if ($this->instructions) {
                     echo wp_kses_post(wpautop(wptexturize($this->instructions)) . PHP_EOL);
@@ -134,7 +124,6 @@ namespace SoldoShop\UPNalog {
                 $this->genUPNDescription($order);
                 $this->genUPN($order);
             }
-
         }
 
         /**
@@ -142,20 +131,20 @@ namespace SoldoShop\UPNalog {
          *
          * @param int $order_id Order ID.
          */
-        public function upn_page($order_id)
-        {
+        public function upn_page($order_id) {
+            $order = wc_get_order( $order_id );
+            if ('bacs' === $order->get_payment_method() && $order->has_status('on-hold')) {
+                echo '</br>';
+                echo '<h2 class="woocommerce-column__title">UPN Nalog</h2>';
 
-            echo '</br>';
-            echo '<h2 class="woocommerce-column__title">UPN Nalog</h2>';
-
-            if ($this->instructions) {
-                echo wp_kses_post(wpautop(wptexturize(wp_kses_post($this->instructions))));
+                if ($this->instructions) {
+                    echo wp_kses_post(wpautop(wptexturize(wp_kses_post($this->instructions))));
+                }
+                $order = wc_get_order($order_id);
+                $this->genUPNDescription($order);
+                $this->genUPN($order);
             }
-            $order = wc_get_order($order_id);
-            $this->genUPNDescription($order);
-            $this->genUPN($order);
         }
-
     }
 
     \add_action("woocommerce_init", function () {
